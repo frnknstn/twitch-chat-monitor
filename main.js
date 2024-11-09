@@ -862,6 +862,21 @@ function updateFPS() {
 	frames = 0;
 }
 
+async function getImgurLink(link){
+	let match = /imgur\.com\/((?:a|gallery)\/)?(?:\w+-)*(\w+)$/gim.exec(link);
+	if (!match) {
+		return link
+	}
+
+	let album = match[1];
+	let identifier = match[2];
+
+	let apiLink = ((album) ? `https://api.imgur.com/3/album/${identifier}/images` : `https://api.imgur.com/3/image/${identifier}`);
+	let content = await ((await fetch(apiLink, { "headers": { "Authorization": "Client-ID db1c3074b0b7efc" } })).json());
+	let url = ((album) ? content.data[0].link : content.data.link);
+	console.log(url);
+	return url;
+}
 
 /** Helper functions **/
 function configureToggler(key, callback) {
@@ -873,6 +888,8 @@ function configureToggler(key, callback) {
 		}
 	});
 }
+
+
 
 function createChatLine(userstate, message) {
 	// <div><span class="timestamp">$timestamp</span><span class="chat-user moderator">$username</span><span id="$msg-id">$message</span></div>
